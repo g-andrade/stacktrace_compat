@@ -1,0 +1,15 @@
+{application, stacktrace_compat,
+ [{description, "erlang:get_stacktrace() compatibility for OTP 21+"},
+  {vsn, git},
+  {registered, []},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, ["Guilherme Andrade"]},
+  {licenses, ["MIT"]},
+  {links, [{"Github", "https://github.com/g-andrade/stacktrace_compat"}]}
+ ]}.
