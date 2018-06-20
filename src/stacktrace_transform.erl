@@ -32,9 +32,9 @@
 
 -ifdef(POST_OTP_20).
 parse_transform(AST, _Options) ->
-    write_terms("ast_before.txt", AST),
+    %write_terms("ast_before.txt", AST),
     MappedAST = lists:map(fun map_ast_statement/1, AST),
-    write_terms("ast_after.txt", MappedAST),
+    %write_terms("ast_after.txt", MappedAST),
     MappedAST.
 -else.
 parse_transform(AST, _Options) ->
