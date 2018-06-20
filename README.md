@@ -6,11 +6,11 @@
 `stacktrace_compat` is a workaround for the `erlang:get_stacktrace()`
 deprecation on Erlang/OTP 21.
 
-\[WORK IN PROGRESS\]
-
 It intends on smoothing near-future maintenence of projects that are to
 support both pre- and post-deprecation code by avoiding code duplication
 or ungainly macros.
+
+\[WORK IN PROGRESS\]
 
 #### Example
 
@@ -37,6 +37,8 @@ foobar() ->
             {error, {badarith, StacktraceCompat444353487_1}}
     end.
 ```
+
+#### Details
 
 `stacktrace_transform` defines a parse transform
 (`stacktrace_transform`) which, when applied to a module on OTP 21+,
