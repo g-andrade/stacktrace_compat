@@ -51,7 +51,7 @@ likely to be conflict free.
 
 If no catch pattern is found, no replacement is made. This makes sense
 in naked calls to `erlang:get_stacktrace()` (as they're a no-no) but not
-in calls from within caught exception helpers it's a limitation yet to
+in calls from within caught exception helpers - it's a limitation yet to
 be worked out (if at
 all.)
 

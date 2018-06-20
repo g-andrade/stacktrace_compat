@@ -50,6 +50,6 @@ If no binding has been defined, a generated name will be used that's likely to b
 
 If no catch pattern is found, no replacement is made. This makes sense in naked calls to
 `erlang:get_stacktrace()' (as they're a no-no) but not in calls from within caught exception helpers
-it's a limitation yet to be worked out (if at all.)
+- it's a limitation yet to be worked out (if at all.)
 
 @end
