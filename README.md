@@ -12,19 +12,6 @@ It intends on smoothing near-future maintenence of projects that are to
 support both pre- and post-deprecation code by avoiding code duplication
 or ungainly macros.
 
-It defines a parse transform (`stacktrace_transform`) which, when
-applied to a module on OTP 21+, will replace `erlang:get_stacktrace()`
-calls with instances of the stacktrace binding that was captured on the
-closest catch pattern up the execution tree (within the same function.)
-
-If no binding has been defined, a generated name will be used that's
-likely to be conflict free.
-
-If no catch pattern is found, no replacement is made. This makes sense
-in naked calls to `erlang:get_stacktrace()` (as they're a no-no) but not
-in calls from within caught exception helpers it's a limitation yet to
-be worked out (if at all.)
-
 #### Example
 
 The following snippet:
@@ -50,6 +37,21 @@ foobar() ->
             {error, {badarith, StacktraceCompat444353487_1}}
     end.
 ```
+
+`stacktrace_transform` defines a parse transform
+(`stacktrace_transform`) which, when applied to a module on OTP 21+,
+will replace `erlang:get_stacktrace()` calls with instances of the
+stacktrace binding that was captured on the closest catch pattern up the
+execution tree (within the same function.)
+
+If no binding has been defined, a generated name will be used that's
+likely to be conflict free.
+
+If no catch pattern is found, no replacement is made. This makes sense
+in naked calls to `erlang:get_stacktrace()` (as they're a no-no) but not
+in calls from within caught exception helpers it's a limitation yet to
+be worked out (if at
+all.)
 
 -----
 
