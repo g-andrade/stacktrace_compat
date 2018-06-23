@@ -78,7 +78,7 @@ likely to be conflict free.
 
 If no catch pattern is found, no replacement is made. This makes sense
 in naked calls to `erlang:get_stacktrace()` (they're a no-no anyway) but
-not in calls from within exception helpers, e.g. code that grabs the
+not in calls from within exception helpers, i.e. code that grabs the
 stacktrace from within a function which is not the same as the one from
 which the exception had been thrown - it's a limitation yet to be worked
 out (if at
