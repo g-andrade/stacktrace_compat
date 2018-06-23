@@ -30,6 +30,8 @@
 %% API Function Definitions
 %%-------------------------------------------------------------------
 
+-spec parse_transform(erl_syntax:forms(), []) -> erl_syntax:forms().
+
 -ifdef(POST_OTP_20).
 parse_transform(AST, _Options) ->
     %write_terms("ast_before.txt", AST),
