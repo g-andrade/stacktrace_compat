@@ -3,8 +3,8 @@
 [![](https://img.shields.io/hexpm/v/stacktrace_compat.svg?style=flat)](https://hex.pm/packages/stacktrace_compat)
 [![](https://travis-ci.org/g-andrade/stacktrace_compat.png?branch=master)](https://travis-ci.org/g-andrade/stacktrace_compat)
 
-`stacktrace_compat` is a workaround for the `erlang:get_stacktrace()`
-deprecation on Erlang/OTP 21.
+`stacktrace_compat` is a workaround for the deprecation of
+`erlang:get_stacktrace()` on Erlang/OTP 21.
 
 It intends on smoothing near-future maintenence of projects that are to
 support both pre- and post-deprecation code by avoiding code duplication
@@ -48,7 +48,7 @@ foobar() ->
     end.
 ```
 
-...is transformed into:
+...would be transformed into:
 
 ``` erlang
 foobar() ->
@@ -63,10 +63,10 @@ foobar() ->
 #### Details
 
 `stacktrace_transform` defines a parse transform
-(`stacktrace_transform`) which, when applied to a module on OTP 21+,
-will replace `erlang:get_stacktrace()` calls with instances of the
-stacktrace binding that was captured on the closest catch pattern up the
-execution tree (within the same function.)
+(`stacktrace_transform`) which, when applied to modules on OTP 21+, will
+replace `erlang:get_stacktrace()` calls with instances of the stacktrace
+binding that was captured on the closest catch pattern up the abstract
+syntax tree (within the same named function.)
 
 If no binding has been defined, a generated name will be used that's
 likely to be conflict free.
