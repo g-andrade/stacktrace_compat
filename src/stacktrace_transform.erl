@@ -34,9 +34,9 @@
 
 -ifdef(POST_OTP_20).
 parse_transform(AST, _Options) ->
-    write_terms("ast_before.txt", AST),
+    %write_terms("ast_before.txt", AST),
     MappedAST = lists:map(fun map_ast_statement/1, AST),
-    write_terms("ast_after.txt", MappedAST),
+    %write_terms("ast_after.txt", MappedAST),
     MappedAST.
 -else.
 parse_transform(AST, _Options) ->
@@ -163,10 +163,10 @@ generate_st_var(Nr) ->
     Suffix = integer_to_list(Nr),
     list_to_atom(Prefix ++ Suffix).
 
-write_terms(FilenameSuffix, List) ->
-    {attribute, _Line, module, Module} = lists:keyfind(module, 3, List),
-    Filename = atom_to_list(Module) ++ "." ++ FilenameSuffix,
-    Format = fun(Term) -> io_lib:format("~tp.~n", [Term]) end,
-    Text = lists:map(Format, List),
-    file:write_file(Filename, Text).
+%write_terms(FilenameSuffix, List) ->
+%    {attribute, _Line, module, Module} = lists:keyfind(module, 3, List),
+%    Filename = atom_to_list(Module) ++ "." ++ FilenameSuffix,
+%    Format = fun(Term) -> io_lib:format("~tp.~n", [Term]) end,
+%    Text = lists:map(Format, List),
+%    file:write_file(Filename, Text).
 -endif.
