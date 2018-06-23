@@ -11,9 +11,31 @@
 It intends on smoothing near-future maintenence of projects that are to support both
 pre- and post-deprecation code by avoiding code duplication or ungainly macros.
 
-[WORK IN PROGRESS]
+<h4>Getting Started</h4>
 
-<h4>Example</h4>
+<h5>1. Import `stacktrace_compat' as a dependency</h5>
+
+rebar.config:
+
+<pre lang="erlang" class="erlang">
+{deps,
+ [% [...]
+  {stacktrace_compat, "1.0.0"}
+ ]}.
+</pre>
+
+<h5>2. Apply `stacktrace_transform' when compiling your modules</h5>
+
+rebar.config:
+
+<pre lang="erlang" class="erlang">
+{erl_opts,
+ [% [...]
+  {parse_transform, stacktrace_transform}
+ ]}.
+</pre>
+
+<h4>Example Transform</h4>
 
 The following snippet:
 
