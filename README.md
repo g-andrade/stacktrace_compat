@@ -60,6 +60,11 @@ foobar() ->
     end.
 ```
 
+#### Tested setup
+
+  - Erlang/OTP 17 or higher
+  - rebar3
+
 #### Details
 
 `stacktrace_transform` defines a parse transform

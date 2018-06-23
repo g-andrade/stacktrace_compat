@@ -61,6 +61,13 @@ foobar() ->
     end.
 </pre>
 
+<h4>Tested setup</h4>
+
+<ul>
+<li>Erlang/OTP 17 or higher</li>
+<li>rebar3</li>
+</ul>
+
 <h4>Details</h4>
 
 `stacktrace_transform' defines a parse transform (`stacktrace_transform') which, when
