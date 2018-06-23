@@ -12,7 +12,7 @@ or ungainly macros.
 
 #### Getting Started
 
-##### 1\. Import `stacktrace_compat` as a dependency
+##### 1\. Import as dependency
 
 rebar.config:
 
@@ -23,7 +23,7 @@ rebar.config:
  ]}.
 ```
 
-##### 2\. Apply `stacktrace_transform` when compiling your modules
+##### 2\. Apply transform when compiling modules
 
 rebar.config:
 

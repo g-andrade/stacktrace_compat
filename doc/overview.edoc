@@ -13,7 +13,7 @@ pre- and post-deprecation code by avoiding code duplication or ungainly macros.
 
 <h4>Getting Started</h4>
 
-<h5>1. Import `stacktrace_compat' as a dependency</h5>
+<h5>1. Import as dependency</h5>
 
 rebar.config:
 
@@ -24,7 +24,7 @@ rebar.config:
  ]}.
 </pre>
 
-<h5>2. Apply `stacktrace_transform' when compiling your modules</h5>
+<h5>2. Apply transform when compiling modules</h5>
 
 rebar.config:
 
