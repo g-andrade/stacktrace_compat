@@ -1,5 +1,5 @@
 {application, stacktrace_compat,
- [{description, "erlang:get_stacktrace() compatibility for OTP 21+"},
+ [{description, ":get_stacktrace() compatibility in OTP 21+"},
   {vsn, git},
   {registered, []},
   {applications,
