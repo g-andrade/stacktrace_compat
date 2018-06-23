@@ -4,7 +4,7 @@
 [![](https://travis-ci.org/g-andrade/stacktrace_compat.png?branch=master)](https://travis-ci.org/g-andrade/stacktrace_compat)
 
 `stacktrace_compat` is a workaround for the deprecation of
-`erlang:get_stacktrace()` on Erlang/OTP 21.
+`:get_stacktrace()` on Erlang/OTP 21.
 
 It intends on smoothing near-future maintenence of projects that are to
 support both pre- and post-deprecation code by avoiding code duplication
