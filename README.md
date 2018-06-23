@@ -34,7 +34,7 @@ rebar.config:
  ]}.
 ```
 
-#### Example Transform
+#### Example Transformation
 
 The following snippet:
 

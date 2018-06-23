@@ -35,7 +35,7 @@ rebar.config:
  ]}.
 </pre>
 
-<h4>Example Transform</h4>
+<h4>Example Transformation</h4>
 
 The following snippet:
 
