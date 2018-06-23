@@ -6,7 +6,7 @@
 `stacktrace_compat` is a workaround for the deprecation of
 `:get_stacktrace()` on Erlang/OTP 21.
 
-It intends on smoothing near-future maintenence of projects that are to
+It intends on smoothing near-future maintenance of projects that are to
 support both pre- and post-deprecation code by avoiding code duplication
 or ungainly macros.
 
