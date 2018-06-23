@@ -161,8 +161,8 @@ generate_st_var(Nr) ->
     Suffix = integer_to_list(Nr),
     list_to_atom(Prefix ++ Suffix).
 
-write_terms(Filename, List) ->
-    Format = fun(Term) -> io_lib:format("~tp.~n", [Term]) end,
-    Text = lists:map(Format, List),
-    file:write_file(Filename, Text).
+%write_terms(Filename, List) ->
+%    Format = fun(Term) -> io_lib:format("~tp.~n", [Term]) end,
+%    Text = lists:map(Format, List),
+%    file:write_file(Filename, Text).
 -endif.
