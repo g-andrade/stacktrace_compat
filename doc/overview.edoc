@@ -70,7 +70,7 @@ foobar() ->
 
 <h4>Details</h4>
 
-`stacktrace_transform' defines a parse transform (`stacktrace_transform') which, when
+`stacktrace_compat' defines a parse transform (`stacktrace_transform') which, when
 applied to modules on OTP 21+, will replace `erlang:get_stacktrace()' calls with instances
 of the stacktrace binding that is to be captured on the closest catch pattern up the abstract syntax
 tree (within the same named function.)

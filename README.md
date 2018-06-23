@@ -67,11 +67,11 @@ foobar() ->
 
 #### Details
 
-`stacktrace_transform` defines a parse transform
-(`stacktrace_transform`) which, when applied to modules on OTP 21+, will
-replace `erlang:get_stacktrace()` calls with instances of the stacktrace
-binding that is to be captured on the closest catch pattern up the
-abstract syntax tree (within the same named function.)
+`stacktrace_compat` defines a parse transform (`stacktrace_transform`)
+which, when applied to modules on OTP 21+, will replace
+`erlang:get_stacktrace()` calls with instances of the stacktrace binding
+that is to be captured on the closest catch pattern up the abstract
+syntax tree (within the same named function.)
 
 If no binding has been defined, a generated name will be used that's
 likely to be conflict free.
