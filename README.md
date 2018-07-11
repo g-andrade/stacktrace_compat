@@ -19,7 +19,7 @@ rebar.config:
 ``` erlang
 {deps,
  [% [...]
-  {stacktrace_compat, "1.0.0"}
+  {stacktrace_compat, "1.0.1"}
  ]}.
 ```
 
