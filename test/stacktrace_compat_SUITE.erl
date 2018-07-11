@@ -58,6 +58,12 @@ end_per_group(_Name, Config) ->
 naked_capture_test(_Config) ->
     assert_equivalent_stacktraces(raise, naked_capture).
 
+throw_capture_pattern_test(_Config) ->
+    assert_equivalent_stacktraces(raise, throw_capture_pattern).
+
+capture_after_variable_export_test(_Config) ->
+    assert_equivalent_stacktraces(raise, capture_after_variable_export).
+
 no_capture_test(_Config) ->
     assert_equivalent_stacktraces(raise, no_capture).
 

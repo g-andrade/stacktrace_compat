@@ -36,6 +36,27 @@
 
 raise(naked_capture) ->
     {naked_capture, erlang:get_stacktrace()};
+raise(throw_capture_pattern) ->
+    try
+        throw(throw_capture_pattern)
+    catch
+        throw_capture_pattern ->
+            {throw_capture_pattern, erlang:get_stacktrace()}
+    end;
+raise(capture_after_variable_export) ->
+    try
+        error(capture_after_variable_export)
+    catch
+        error:capture_after_variable_export ->
+            {capture_after_variable_export, erlang:get_stacktrace()}
+    end,
+
+    try
+        error(capture_after_variable_export)
+    catch
+        error:capture_after_variable_export ->
+            {capture_after_variable_export, erlang:get_stacktrace()}
+    end;
 raise(Reason) ->
     try
         error(Reason)

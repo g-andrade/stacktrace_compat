@@ -46,13 +46,37 @@ parse_transform(AST, _Options) ->
 -endif.
 
 %%-------------------------------------------------------------------
+%% Record and Type Definitions
+%%-------------------------------------------------------------------
+
+-ifdef(POST_OTP_20).
+-record(state, {
+          % amount of assigned stacktrace vars within a function (used or not)
+          var_counter :: non_neg_integer(),
+          % stacktrace vars within nested try catch blocks (assigned or not)
+          var_stack :: [var()]
+         }).
+
+-record(var, {
+          name :: atom(),
+          used :: boolean()
+         }).
+-type var() :: #var{}.
+-endif.
+
+%%-------------------------------------------------------------------
 %% Internal Function Definitions
 %%-------------------------------------------------------------------
 
 -ifdef(POST_OTP_20).
 map_ast_statement({function, Line, Name, Arity, Clauses}) ->
-    InitialStVarStack = [],
-    {MappedClauses, _} = walk_statements(Clauses, InitialStVarStack),
+    InitialState =
+        #state{
+           var_counter = 0,
+           var_stack = []
+          },
+    MappedClauses = [element(1, walk_statements(Clause, InitialState))
+                     || Clause <- Clauses],
     {function, Line, Name, Arity, MappedClauses};
 map_ast_statement(Statement) ->
     Statement.
@@ -63,12 +87,12 @@ walk_statements({'try', Line,     % try
                  CatchPatterns,   % catch ...
                  AfterExpressions % after ...
                 },
-                StVarStack) ->
-    {MappedExpression, StVarStack2} = walk_statements(Expression, StVarStack),
-    {MappedResultPatterns, StVarStack3} = walk_statements(ResultPatterns, StVarStack2),
-    {MappedCatchPatterns, StVarStack4} =
-        lists:mapfoldl(fun mapfoldl_catch_pattern/2, StVarStack3, CatchPatterns),
-    {MappedAfterExpressions, StVarStack5} = walk_statements(AfterExpressions, StVarStack4),
+                State) ->
+    {MappedExpression, State2} = walk_statements(Expression, State),
+    {MappedResultPatterns, State3} = walk_statements(ResultPatterns, State2),
+    {MappedCatchPatterns, State4} =
+        lists:mapfoldl(fun mapfoldl_catch_pattern/2, State3, CatchPatterns),
+    {MappedAfterExpressions, State5} = walk_statements(AfterExpressions, State4),
     {{'try',
       Line,
       MappedExpression,
@@ -76,36 +100,37 @@ walk_statements({'try', Line,     % try
       MappedCatchPatterns,
       MappedAfterExpressions
      },
-     StVarStack5};
+     State5};
 walk_statements({call, Line,
                  % erlang:get_stacktrace()
                  {remote, _RemoteLine,
                   {atom, _ModuleLine, erlang},
                   {atom, _FunctionLine, get_stacktrace}},
                  [] = _Args} = Statement,
-                StVarStack) ->
-    case StVarStack of
-        [{st_var, StVar, UseCount} | StVarStackTail] ->
+                State) ->
+    case State#state.var_stack of
+        [Var | StackTail] ->
             % replace call to erlang:get_stacktrace() with latest assigned stacktrace var
-            MappedStatement = {var, Line, StVar},
-            UpdatedStVarStack = [{st_var, StVar, UseCount + 1} | StVarStackTail],
-            {MappedStatement, UpdatedStVarStack};
+            MappedStatement = {var, Line, Var#var.name},
+            UpdatedVar = Var#var{ used = true },
+            UpdatedState = State#state{ var_stack = [UpdatedVar | StackTail] },
+            {MappedStatement, UpdatedState};
         [] ->
             % no vars available for replacement
-            {Statement, StVarStack}
+            {Statement, State}
     end;
-walk_statements(Statement, StVarStack) when is_tuple(Statement) ->
+walk_statements(Statement, State) when is_tuple(Statement) ->
     % very lazy way of walking the whole thing without explicit patterning
     % of all children formats
     StatementParts = tuple_to_list(Statement),
-    {MappedStatementParts, UpdatedStVarStack} =
-        walk_statements(StatementParts, StVarStack),
+    {MappedStatementParts, UpdatedState} =
+        walk_statements(StatementParts, State),
     MappedStatement = list_to_tuple(MappedStatementParts),
-    {MappedStatement, UpdatedStVarStack};
-walk_statements(Statements, StVarStack) when is_list(Statements) ->
-    lists:mapfoldl(fun walk_statements/2, StVarStack, Statements);
-walk_statements(StatementPart, StVarStack) ->
-    {StatementPart, StVarStack}.
+    {MappedStatement, UpdatedState};
+walk_statements(Statements, State) when is_list(Statements) ->
+    lists:mapfoldl(fun walk_statements/2, State, Statements);
+walk_statements(StatementPart, State) ->
+    {StatementPart, State}.
 
 mapfoldl_catch_pattern({clause, Line,
                         % catch Class:Reason:Stacktrace?
@@ -119,29 +144,41 @@ mapfoldl_catch_pattern({clause, Line,
                          % ->
                          Body
                        },
-                       StVarStack) ->
+                       State) ->
 
-    {MappedStExpression, FinalMappedBody} =
+    {MappedStExpression, FinalMappedBody, UpdatedState} =
         case StExpression of
             {var, StExpressionLine, '_'} ->
                 % Let's tentatively assign stacktrace to a var
-                ImplicitStVarNr = length(StVarStack) + 1,
-                ImplicitStVar = generate_st_var(ImplicitStVarNr),
-                StVarStack2 = [{st_var, ImplicitStVar, 0} | StVarStack],
-                {MappedBody, StVarStack3} = walk_statements(Body, StVarStack2),
-                case hd(StVarStack3) of
-                    {st_var, ImplicitStVar, 0} ->
-                        % Stacktrace var was not used; discard it
-                        {StExpression, MappedBody};
-                    {st_var, ImplicitStVar, _Count} ->
-                        {{var, StExpressionLine, ImplicitStVar},
-                         MappedBody}
+                VarCounter = State#state.var_counter,
+                VarStack = State#state.var_stack,
+                VarCounter2 = VarCounter + 1,
+                NewVarName = generate_st_var(VarCounter2),
+                NewVar = #var{ name = NewVarName, used = false },
+                VarStack2 = [NewVar | VarStack],
+                State2 = State#state{ var_counter = VarCounter2, var_stack = VarStack2 },
+                {MappedBody, State3} = walk_statements(Body, State2),
+
+                case State3#state.var_stack of
+                    [#var{ name = NewVarName, used = false } | VarStack] ->
+                        % Stacktrace var was not used
+                        {StExpression, MappedBody,
+                         State3#state{ var_stack = VarStack }};
+                    [#var{ name = NewVarName, used = true } | VarStack] ->
+                        % Stacktrace var was used
+                        {{var, StExpressionLine, NewVarName}, MappedBody,
+                         State3#state{ var_stack = VarStack }}
                 end;
             {var, _StExpressionLine, ExplicitStVar} ->
                 % Stacktrace has been explicitly assigned
-                UpdatedStVarStack = [{st_var, ExplicitStVar, 0} | StVarStack],
-                {MappedBody, _} = walk_statements(Body, UpdatedStVarStack),
-                {StExpression, MappedBody}
+                VarStack = State#state.var_stack,
+                ExplicitVar = #var{ name = ExplicitStVar, used = false },
+                VarStack2 = [ExplicitVar | VarStack],
+                State2 = State#state{ var_stack = VarStack2 },
+                {MappedBody, State3} = walk_statements(Body, State2),
+                [#var{} | VarStack] = State3#state.var_stack,
+                {StExpression, MappedBody,
+                 State3#state{ var_stack = VarStack }}
         end,
 
     %%%%%%%
@@ -158,7 +195,7 @@ mapfoldl_catch_pattern({clause, Line,
          % ->
          FinalMappedBody
         },
-    {MappedClause, StVarStack}.
+    {MappedClause, UpdatedState}.
 
 generate_st_var(Nr) ->
     Prefix = "StacktraceCompat444353487_",
