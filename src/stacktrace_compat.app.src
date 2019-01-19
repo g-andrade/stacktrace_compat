@@ -10,5 +10,7 @@
   {modules, []},
 
   {licenses, ["MIT"]},
-  {links, [{"Github", "https://github.com/g-andrade/stacktrace_compat"}]}
+  {links, [{"GitHub", "https://github.com/g-andrade/stacktrace_compat"},
+           {"GitLab", "https://gitlab.com/g-andrade/stacktrace_compat"}
+          ]}
  ]}.
