@@ -62,7 +62,7 @@ foobar() ->
 
 #### Tested setup
 
-  - Erlang/OTP 17 or higher
+  - Erlang/OTP 18 or higher
   - rebar3
 
 #### Details
@@ -81,8 +81,7 @@ in naked calls to `erlang:get_stacktrace()` (they're a no-no anyway) but
 not in calls from within exception helpers, i.e. code that grabs the
 stacktrace from within a function which is not the same as the one from
 which the exception had been thrown - it's a limitation yet to be worked
-out (if at
-all.)
+out (if at all.)
 
 -----
 

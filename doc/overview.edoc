@@ -64,7 +64,7 @@ foobar() ->
 <h4>Tested setup</h4>
 
 <ul>
-<li>Erlang/OTP 17 or higher</li>
+<li>Erlang/OTP 18 or higher</li>
 <li>rebar3</li>
 </ul>
 
