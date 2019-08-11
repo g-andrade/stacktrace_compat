@@ -2,6 +2,7 @@
 
 [![](https://img.shields.io/hexpm/v/stacktrace_compat.svg?style=flat)](https://hex.pm/packages/stacktrace_compat)
 [![](https://travis-ci.org/g-andrade/stacktrace_compat.png?branch=master)](https://travis-ci.org/g-andrade/stacktrace_compat)
+[![](https://circleci.com/gh/g-andrade/stacktrace_compat/tree/master.svg?style=svg)](https://circleci.com/gh/g-andrade/stacktrace_compat/tree/master)
 
 `stacktrace_compat` is a workaround for the deprecation of
 `:get_stacktrace()` in Erlang/OTP 21.
