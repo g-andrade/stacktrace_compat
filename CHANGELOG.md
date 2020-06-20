@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - test cases that broke under OTP 23
+- library version mentioned in documentation example
 
 ## [1.1.2] - 2019-11-11
 ### Changed
