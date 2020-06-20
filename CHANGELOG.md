@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 - compatibility with OTP 18
 
+### Fixed
+- test cases that broke under OTP 23
+
 ## [1.1.2] - 2019-11-11
 ### Changed
 - generated documentation as to (tentatively) make it prettier
