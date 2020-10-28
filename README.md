@@ -17,41 +17,49 @@ or ungainly macros.
 
 rebar.config:
 
-    {deps,
-     [% [...]
-      {stacktrace_compat, "1.2.1"}
-     ]}.
+``` erlang
+{deps,
+ [% [...]
+  {stacktrace_compat, "1.2.1"}
+ ]}.
+```
 
 ##### 2. Apply transform when compiling modules
 
 rebar.config:
 
-    {erl_opts,
-     [% [...]
-      {parse_transform, stacktrace_transform}
-     ]}.
+``` erlang
+{erl_opts,
+ [% [...]
+  {parse_transform, stacktrace_transform}
+ ]}.
+```
 
 #### Example Transformation
 
 The following snippet:
 
-    foobar() ->
-        try
-            1 / (rand:uniform(2) - 1)
-        catch
-            error:badarith ->
-                {error, {badarith, erlang:get_stacktrace()}}
-        end.
+``` erlang
+foobar() ->
+    try
+        1 / (rand:uniform(2) - 1)
+    catch
+        error:badarith ->
+            {error, {badarith, erlang:get_stacktrace()}}
+    end.
+```
 
 ...would be transformed into:
 
-    foobar() ->
-        try
-            1 / (rand:uniform(2) - 1)
-        catch
-            error:badarith:StacktraceCompat444353487_1 ->
-                {error, {badarith, StacktraceCompat444353487_1}}
-        end.
+``` erlang
+foobar() ->
+    try
+        1 / (rand:uniform(2) - 1)
+    catch
+        error:badarith:StacktraceCompat444353487_1 ->
+            {error, {badarith, StacktraceCompat444353487_1}}
+    end.
+```
 
 #### Tested setup
 
