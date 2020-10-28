@@ -115,7 +115,7 @@ raise21(Reason) ->
     try
         error(Reason)
     catch
-        error:unused_var_with_function_capture:Stacktrace ->
+        error:unused_var_with_function_capture:_Stacktrace ->
             {unused_var_with_function_capture, erlang:get_stacktrace()};
         error:var_capture:Stacktrace ->
             {var_capture, Stacktrace};
