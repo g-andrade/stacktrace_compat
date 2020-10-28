@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [1.2.1] - 2020-10-28
 ### Fixed
 - occasional errors upon performing Dialyzer and xref checks concurrently
+- Dialyzer-related warnings on recent versions of `rebar3`
 
 ## [1.2.0] - 2020-05-26
 ### Removed
