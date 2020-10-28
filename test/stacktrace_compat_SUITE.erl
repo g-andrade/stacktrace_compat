@@ -126,7 +126,8 @@ compile_test_module(ExtraOptions) ->
         [binary,
          report_errors,
          report_warnings,
-         debug_info
+         debug_info,
+         {d, 'COMPILING_WITHIN_TEST_SUITE'}
          | case erlang:system_info(otp_release) of
                [V|_] when V >= $3, V =< $9 ->
                    [{d, 'POST_OTP_20'},

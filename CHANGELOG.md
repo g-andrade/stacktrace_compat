@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - occasional errors upon performing Dialyzer and xref checks concurrently
 - Dialyzer-related warnings on recent versions of `rebar3`
+- compiler warnings when running tests on OTP versions post- `get_stacktrace()` deprecation
 
 ## [1.2.0] - 2020-05-26
 ### Removed

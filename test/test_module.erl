@@ -20,6 +20,12 @@
 
 -module(test_module).
 
+% Keep `rebar3' away from warning-inducing code
+% on recent versions of OTP (due to
+% `erlang:get_stacktrace()' deprecation.)
+%
+-ifdef(COMPILING_WITHIN_TEST_SUITE).
+
 %% ------------------------------------------------------------------
 %% API function Exports
 %% ------------------------------------------------------------------
@@ -131,3 +137,5 @@ raise21(Reason) ->
 
 helper() ->
     erlang:get_stacktrace().
+
+-endif. % COMPILING_WITHIN_TEST_SUITE
