@@ -3,8 +3,8 @@
 
 <a target="_parent" href="https://hex.pm/packages/stacktrace_compat" alt="Hex.pm Package">
     <img src="https://img.shields.io/hexpm/v/stacktrace_compat.svg?style=flat"/></a>
-<a target="_parent" href="https://travis-ci.org/g-andrade/stacktrace_compat" alt="Travis CI Build Status">
-    <img src="https://travis-ci.org/g-andrade/stacktrace_compat.png?branch=master"/></a>
+<a target="_parent" href="https://github.com/g-andrade/stacktrace_compat/actions?query=workflow%3Abuild" alt="Travis CI Build Status">
+    <img src="https://github.com/g-andrade/stacktrace_compat/workflows/build/badge.svg"/></a>
 
 `stacktrace_compat' is a workaround for the deprecation of `:get_stacktrace()' in Erlang/OTP 21.
 
