@@ -167,13 +167,7 @@ compile_test_module(ExtraOptions) ->
          debug_info,
          {d, 'COMPILING_WITHIN_TEST_SUITE'}
          | case erlang:system_info(otp_release) of
-               [V|_] when V >= $3, V =< $9 ->
-                   [{d, 'POST_OTP_20'},
-                    {d, 'POST_OTP_22'}];
-               [$2,V|_] when V >= $3 ->
-                   [{d, 'POST_OTP_20'},
-                    {d, 'POST_OTP_22'}];
-               [$2,V|_] when V >= $1 ->
+               [V|_] when V >= $1, V =< $9 ->
                    [{d, 'POST_OTP_20'}];
                _ ->
                    []
