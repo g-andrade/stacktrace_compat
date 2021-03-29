@@ -56,51 +56,87 @@ end_per_group(_Name, Config) ->
 %% ------------------------------------------------------------------
 
 naked_capture_test(_Config) ->
-    assert_expected_stacktraces_for(raise, naked_capture).
+    assert_expected_result_for(raise, naked_capture).
 
 throw_capture_pattern_test(_Config) ->
-    assert_expected_stacktraces_for(raise, throw_capture_pattern).
+    assert_expected_result_for(raise, throw_capture_pattern).
 
 capture_after_variable_export_test(_Config) ->
-    assert_expected_stacktraces_for(raise, capture_after_variable_export).
+    assert_expected_result_for(raise, capture_after_variable_export).
 
 no_capture_test(_Config) ->
-    assert_expected_stacktraces_for(raise, no_capture).
+    assert_expected_result_for(raise, no_capture).
 
 function_capture_test(_Config) ->
-    assert_expected_stacktraces_for(raise, function_capture).
+    assert_expected_result_for(raise, function_capture).
 
 nested_function_capture_test(_Config) ->
-    assert_expected_stacktraces_for(raise, nested_function_capture).
+    assert_expected_result_for(raise, nested_function_capture).
 
 nested_function_capture_with_both_test(_Config) ->
-    assert_expected_stacktraces_for(raise, nested_function_capture_with_both).
+    assert_expected_result_for(raise, nested_function_capture_with_both).
 
 function_capture_in_expression_test(_Config) ->
-    assert_expected_stacktraces_for(raise, function_capture_in_expression).
+    assert_expected_result_for(raise, function_capture_in_expression).
 
 function_capture_in_result_handler_test(_Config) ->
-    assert_expected_stacktraces_for(raise, function_capture_in_result_handler).
+    assert_expected_result_for(raise, function_capture_in_result_handler).
 
 helper_capture_test(_Config) ->
-    assert_expected_stacktraces_for(raise, helper_capture).
+    assert_expected_result_for(raise, helper_capture).
 
 -ifdef(POST_OTP_20).
 unused_var_with_function_capture_test(_Config) ->
-    assert_expected_stacktraces_for(raise21, unused_var_with_function_capture).
+    assert_expected_result_for(raise21, unused_var_with_function_capture).
 
 var_capture_test(_Config) ->
-    assert_expected_stacktraces_for(raise21, var_capture).
+    assert_expected_result_for(raise21, var_capture).
 
 nested_var_capture_with_both_test(_Config) ->
-    assert_expected_stacktraces_for(raise21, nested_var_capture_with_both).
+    assert_expected_result_for(raise21, nested_var_capture_with_both).
 -endif.
 
 %% ------------------------------------------------------------------
 %% Internal
 %% ------------------------------------------------------------------
 
-assert_expected_stacktraces_for(Function, CaseName) ->
+-ifdef(POST_OTP_23).
+assert_expected_result_for(Function, CaseName) ->
+    {ok, Cwd} = file:get_cwd(),
+    TestModuleBeamPath = filename:join(Cwd, "test_module"),
+    ct:pal("TestModuleBeamPath: ~p", [TestModuleBeamPath]),
+
+    compile_and_load_test_module([]),
+    assert_test_module_has_no_transform(),
+    WithoutTransformST
+        = case lists:member(CaseName, [no_capture,
+                                       var_capture,
+                                       nested_var_capture_with_both]) of
+              true ->
+                  {CaseName, StacktraceBefore} = test_module:Function(CaseName),
+                  StacktraceBefore;
+              false ->
+                  ?assertError(undef, test_module:Function(CaseName)),
+                  crash_following_dropped_support
+          end,
+
+    compile_and_load_test_module([{parse_transform, stacktrace_transform}]),
+    assert_test_module_has_transform(),
+    WithTransformST
+        = case lists:member(CaseName, [naked_capture,
+                                       helper_capture]) of
+              true ->
+                  ?assertError(undef, test_module:Function(CaseName)),
+                  crash_following_dropped_support;
+              false ->
+                  {CaseName, StacktraceAfter} = test_module:Function(CaseName),
+                  StacktraceAfter
+          end,
+
+    assert_expected_stacktraces(Function, CaseName, WithoutTransformST, WithTransformST).
+
+-else.
+assert_expected_result_for(Function, CaseName) ->
     {ok, Cwd} = file:get_cwd(),
     TestModuleBeamPath = filename:join(Cwd, "test_module"),
     ct:pal("TestModuleBeamPath: ~p", [TestModuleBeamPath]),
@@ -114,6 +150,8 @@ assert_expected_stacktraces_for(Function, CaseName) ->
     {CaseName, WithTransformST} = test_module:Function(CaseName),
 
     assert_expected_stacktraces(Function, CaseName, WithoutTransformST, WithTransformST).
+
+-endif. % -idef(POST_OTP_23).
 
 compile_and_load_test_module(ExtraOptions) ->
     _ = code:purge(test_module),
@@ -155,6 +193,28 @@ assert_test_module_has_transform() ->
     CompileOptions = proplists:get_value(options, CompileAttr, []),
     ?assert(lists:member({parse_transform, stacktrace_transform}, CompileOptions)).
 
+-ifdef(POST_OTP_23).
+assert_expected_stacktraces(Function, CaseName, WithoutTransformST, WithTransformST)
+  when Function =:= raise, CaseName =:= no_capture ->
+    ?assertEqual([], WithoutTransformST),
+    ?assertEqual([], WithTransformST);
+assert_expected_stacktraces(Function, CaseName, WithoutTransformST, WithTransformST)
+  when Function =:= raise, CaseName =:= naked_capture;
+       Function =:= raise, CaseName =:= helper_capture ->
+    ?assertEqual(crash_following_dropped_support, WithoutTransformST),
+    ?assertEqual(crash_following_dropped_support, WithTransformST);
+assert_expected_stacktraces(Function, CaseName, WithoutTransformST, WithTransformST)
+  when Function =:= raise21, (CaseName =:= var_capture orelse
+                              CaseName =:= nested_var_capture_with_both) ->
+    assert_stacktrace_equivalence(WithoutTransformST, WithTransformST);
+assert_expected_stacktraces(Function, CaseName, WithoutTransformST, WithTransformST)
+  when Function =/= raise; CaseName =/= naked_capture ->
+    ?assertEqual(crash_following_dropped_support, WithoutTransformST),
+    ?assertMatch(
+       [{_Module, _Function, _ArtityOrArgs, _Info} | _],
+       WithTransformST).
+
+-else.
 -ifdef(POST_OTP_22).
 assert_expected_stacktraces(Function, CaseName, WithoutTransformST, WithTransformST)
   when Function =:= raise, (CaseName =/= naked_capture andalso
@@ -180,6 +240,7 @@ assert_expected_stacktraces(_, _CaseName, WithoutTransformST, WithTransformST) -
     assert_stacktrace_equivalence(WithoutTransformST, WithTransformST).
 
 -endif. % -ifdef(POST_OTP_22)
+-endif. % -ifdef(POST_OTP_23).
 
 assert_stacktrace_equivalence([{ModuleA, FunctionA, ArityOrArgsA, _InfoA} | NextA],
                               [{ModuleB, FunctionB, ArityOrArgsB, _InfoB} | NextB]) ->
