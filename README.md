@@ -1,87 +1,45 @@
 # stacktrace\_compat
 
 [![](https://img.shields.io/hexpm/v/stacktrace_compat.svg?style=flat)](https://hex.pm/packages/stacktrace_compat)
-[![](https://github.com/g-andrade/stacktrace_compat/workflows/build/badge.svg)](https://github.com/g-andrade/stacktrace_compat/actions?query=workflow%3Abuild)
 
-`stacktrace_compat` is a workaround for the deprecation of
-`:get_stacktrace()` in Erlang/OTP 21.
+Given the upcoming release of Erlang/OTP 24, `stacktrace_compat` is no
+longer maintained as of April 2nd, 2021.
 
-It intends on smoothing near-future maintenance of projects that are to
-support both pre- and post-deprecation code by avoiding code duplication
-or ungainly macros.
+⚠️ **You should discontinue any use of this library** unless you
+strictly need to maintain compatibility with Erlang/OTP versions older
+than 21 (released back in 2018.)
 
-#### Getting Started
+##### How do I do that?
 
-##### 1\. Import as dependency
+Start by:
 
-rebar.config:
+1.  removing, from `rebar.config`:
+      - under erl\_opts, `{parse_transform, stacktrace_compat}`
+      - under deps, `stacktrace_compat`
+2.  removing, from `your_app.app.src`:
+      - under applications, `stacktrace_compat` (it needn't be there,
+        but it may be)
 
-``` erlang
-{deps,
- [% [...]
-  {stacktrace_compat, "1.2.2"}
- ]}.
-```
+..and then:
 
-##### 2\. Apply transform when compiling modules
+1.  search your code for calls to `erlang:get_stacktrace()`;
+2.  replace them with [the current
+    syntax](https://erlang.org/doc/reference_manual/expressions.html#try)
+    for capturing stacktraces.
 
-rebar.config:
+##### History
 
-``` erlang
-{erl_opts,
- [% [...]
-  {parse_transform, stacktrace_transform}
- ]}.
-```
+`stacktrace_compat` defined a parse transform (`stacktrace_transform`)
+which, when applied to modules on OTP 21+, replaced calls to
+`erlang:get_stacktrace()` with instances of the stacktrace binding that
+was to be captured on the closest catch pattern up the [abstract syntax
+tree](http://erlang.org/doc/man/erl_syntax.html) (within the same named
+function.)
 
-#### Example Transformation
+If no binding had been defined, a generated name would have been used
+that was likely to be conflict free.
 
-The following snippet:
-
-``` erlang
-foobar() ->
-    try
-        1 / (rand:uniform(2) - 1)
-    catch
-        error:badarith ->
-            {error, {badarith, erlang:get_stacktrace()}}
-    end.
-```
-
-...would be transformed into:
-
-``` erlang
-foobar() ->
-    try
-        1 / (rand:uniform(2) - 1)
-    catch
-        error:badarith:StacktraceCompat444353487_1 ->
-            {error, {badarith, StacktraceCompat444353487_1}}
-    end.
-```
-
-#### Tested setup
-
-  - Erlang/OTP 19 or higher
-  - rebar3
-
-#### Details
-
-`stacktrace_compat` defines a parse transform (`stacktrace_transform`)
-which, when applied to modules on OTP 21+, will replace
-`erlang:get_stacktrace()` calls with instances of the stacktrace binding
-that is to be captured on the closest catch pattern up the abstract
-syntax tree (within the same named function.)
-
-If no binding has been defined, a generated name will be used that's
-likely to be conflict free.
-
-If no catch pattern is found, no replacement is made. This makes sense
-in naked calls to `erlang:get_stacktrace()` (they're a no-no anyway) but
-not in calls from within exception helpers, i.e. code that grabs the
-stacktrace from within a function which is not the same as the one from
-which the exception had been thrown - it's a limitation yet to be worked
-out (if at all.)
+If no catch pattern was found, no replacement was made.
 
 -----
 

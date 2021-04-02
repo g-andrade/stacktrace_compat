@@ -1,4 +1,5 @@
-%% Copyright (c) 2018-2021 Guilherme Andrade
+%% @copyright (c) 2018-2021 Guilherme Andrade
+%% @private
 %%
 %% Permission is hereby granted, free of charge, to any person obtaining a
 %% copy  of this software and associated documentation files (the "Software"),
@@ -19,6 +20,8 @@
 %% DEALINGS IN THE SOFTWARE.
 
 -module(stacktrace_transform).
+
+-deprecated(module).
 
 %%-------------------------------------------------------------------
 %% API Function Exports
