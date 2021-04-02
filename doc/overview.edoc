@@ -17,7 +17,7 @@ Start by:
 <ol>
 <li>removing, from `rebar.config':
     <ul>
-        <li>under erl_opts, `{parse_transform, stacktrace_compat}'</li>
+        <li>under erl_opts, `{parse_transform, stacktrace_transform}'</li>
         <li>under deps, `stacktrace_compat'</li>
     </ul>
 </li>

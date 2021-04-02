@@ -14,7 +14,7 @@ than 21 (released back in 2018.)
 Start by:
 
 1.  removing, from `rebar.config`:
-      - under erl\_opts, `{parse_transform, stacktrace_compat}`
+      - under erl\_opts, `{parse_transform, stacktrace_transform}`
       - under deps, `stacktrace_compat`
 2.  removing, from `your_app.app.src`:
       - under applications, `stacktrace_compat` (it needn't be there,
